@@ -30,7 +30,7 @@ def rotate(xb,yb,angle):
     return xb,yb
     
 def blur(img):
-    img = cv2.blur(img, (3, 3));
+    img = cv2.blur(img, (3, 3))
     return img
 
 def add_noise(img):
@@ -68,8 +68,8 @@ def creat_dataset(image_num = 15, mode = 'original'):
     g_count = 0
     for i in tqdm(range(len(image_sets))):
         count = 0
-        src_img = cv2.imread('./data/src/' + image_sets[i])  # 3 channels
-        label_img = cv2.imread('./data/label/' + image_sets[i],cv2.IMREAD_GRAYSCALE)  # single channel
+        src_img = cv2.imread('../../Python/seg-data/data_MB/' + image_sets[i])  # 3 channels
+        label_img = cv2.imread('../../Python/seg-data/data_MB/' + image_sets[i],cv2.IMREAD_GRAYSCALE)  # single channel
         X_height,X_width,_ = src_img.shape
         while count < image_each:
             random_width = random.randint(0, X_width - img_w - 1)

@@ -8,7 +8,7 @@ import gdal
 from skimage import exposure
 img_w = 256  
 img_h = 256 
-data_dir='..\..\Python\seg-data\data_MB/'
+data_dir='../../Python/seg-data/data_MB/'
 
 image_sets = ['2018']
 def tiff2array(tif_data):
