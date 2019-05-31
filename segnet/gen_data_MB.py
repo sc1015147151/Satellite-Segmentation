@@ -6,9 +6,10 @@ import numpy as np
 from tqdm import tqdm
 import gdal
 from skimage import exposure
+import matplotlib.pyplot as plt
 img_w = 256  
 img_h = 256 
-data_dir='../../Python/seg-data/data_MB/'
+data_dir=r'../../../Python/seg-data/data_MB/'
 
 image_sets = ['2018']
 def tiff2array(tif_data):
@@ -19,7 +20,9 @@ def tiff2array(tif_data):
     return array_data,x_width,x_height
 def changeImgDataShape(originalShapeData):
     data=originalShapeData
+    #print(data.shape)
     changedShapeData=np.append(np.append(np.append(data[3,:,:][:,:,np.newaxis],data[2,:,:][:,:,np.newaxis],axis=2),data[1,:,:][:,:,np.newaxis],axis=2),data[0,:,:][:,:,np.newaxis],axis=2)
+    #print(changedShapeData.shape)
     return changedShapeData
 def data_augment(image,label,channel=4):    
     channnels=np.zeros(image.shape)
@@ -49,6 +52,7 @@ def data_augment(image,label,channel=4):
     #plt.imshow(label)
     #plt.show()
     return channnels,label
+    return image,label
 def data_augment1(xb,yb):
     xb,yb=flip(xb,yb)
 
@@ -70,13 +74,14 @@ def creat_dataset(image_num = 1500, mode = 'original'):
             
 
             src_roi = im_data[:,random_height: random_height + img_h, random_width: random_width + img_w]
+            
             label_roi = label_img[random_height: random_height + img_h, random_width: random_width + img_w]
             
             if mode == 'augment':
                 src_roi,label_roi = data_augment(src_roi,label_roi)
                 
                 label_roi_band0=src_roi[:,:,0]
-                
+            src_roi=changeImgDataShape(src_roi)    
             if (label_roi_band0[label_roi_band0==0].size<10000):
                 visualize = np.zeros((256,256)).astype(np.uint8)
                 visualize = label_roi*250
@@ -94,4 +99,4 @@ def creat_dataset(image_num = 1500, mode = 'original'):
                     count += 1 
                     g_count += 1
 if __name__=='__main__':  
-    creat_dataset(100,'augment')
+    creat_dataset(150,'augment')

@@ -88,9 +88,9 @@ def creat_dataset(image_num = 15, mode = 'original'):
                         if (pixel == np.array([0,0,0])).all():
                             black_num=black_num+1
                 if (black_num<256*256*0.65):
-                    cv2.imwrite(('./data/aug/train/visualize/%d.png' % g_count),visualize)
-                    cv2.imwrite(('./data/aug/train/src/%d.png' % g_count),src_roi)
-                    cv2.imwrite(('./data/aug/train/label/%d.png' % g_count),label_roi)
+                    cv2.imwrite(('../../Python/seg-data/data_MB/visualize/%d.png' % g_count),visualize)
+                    cv2.imwrite(('../../Python/seg-data/data_MB/%d.png' % g_count),src_roi)
+                    cv2.imwrite(('../../Python/seg-data/data_MB/label/%d.png' % g_count),label_roi)
                     count += 1 
                     g_count += 1
 
