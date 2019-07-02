@@ -9,8 +9,8 @@ from sklearn.preprocessing import LabelEncoder
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 from keras import backend as K 
 K.set_image_dim_ordering('th')
-TEST_SET = ['0000.png','0001.png','0002.png']
-
+TEST_SET = ['2016Sentinel.png','2018GF.png']
+predir=r'D:\Python\seg-data\data-GF\pre/'
 image_size = 256
 
 classes = [0. , 1]  
@@ -21,7 +21,7 @@ labelencoder.fit(classes)
 def args_parse():
 # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
-    ap.add_argument("-m", "--model", required=True,
+    ap.add_argument("-m", "--model", required=False,default='D:\Python\seg-data\data-GF\model\GF-test.h5',
         help="path to trained model model")
     ap.add_argument("-s", "--stride", required=False,
         help="crop slide stride", type=int, default=image_size)
@@ -37,17 +37,18 @@ def predict(args):
     for n in range(len(TEST_SET)):
         path = TEST_SET[n]
         #load the image
-        image = cv2.imread('./data/aug/train/src/' + path)
-        image = cv2.resize(image,(256,256))
+        image = cv2.imread(predir + path)
+
         h,w,_ = image.shape
         padding_h = (h//stride + 1) * stride 
         padding_w = (w//stride + 1) * stride
         padding_img = np.zeros((padding_h,padding_w,3),dtype=np.uint8)
         padding_img[0:h,0:w,:] = image[:,:,:]
-        padding_img = padding_img.astype("float") / 255.0
+        padding_img = padding_img.astype("float") 
         padding_img = img_to_array(padding_img)
-        print ('src:',padding_img.shape)
+        
         mask_whole = np.zeros((padding_h,padding_w),dtype=np.uint8)
+        print('src:',padding_img.shape,mask_whole.shape,padding_h,padding_w)
         for i in range(padding_h//stride):
             for j in range(padding_w//stride):
                 crop = padding_img[:3,i*stride:i*stride+image_size,j*stride:j*stride+image_size]
@@ -55,12 +56,13 @@ def predict(args):
                 if (ch != 256 or cw != 256):
                     print ('invalid size!')
                     continue
-                    
+                #print(set(crop.reshape(-1).tolist()))
                 crop = np.expand_dims(crop, axis=0)
                 #print 'crop:',crop.shape
                 pred = model.predict_classes(crop,verbose=0)
+                
                 pred_prob = model.predict_proba(crop,verbose=1)
-                print (pred_prob.shape) 
+                
                 pred = labelencoder.inverse_transform(pred[0])  
                 #print (np.unique(pred))  
                 pred = pred.reshape((256,256)).astype(np.uint8)
@@ -68,8 +70,8 @@ def predict(args):
                 mask_whole[i*stride:i*stride+image_size,j*stride:j*stride+image_size] = pred[:,:]
 
         
-        cv2.imwrite('./data/aug/train/pre/'+str(n+1)+'.png',mask_whole[0:h,0:w])
-        
+        cv2.imwrite(predir+'pre'+path,mask_whole[0:h,0:w]*250)
+        print ('pre:',mask_whole.shape,set(mask_whole.reshape(-1).tolist()))
     
 from sklearn import preprocessing
 import warnings

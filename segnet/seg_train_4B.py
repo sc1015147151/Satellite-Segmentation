@@ -278,7 +278,7 @@ def train():
     BS = 4
     model = SegNet() 
     
-    modelcheck = ModelCheckpoint('..\..\Python\seg-data/model/'+time.strftime(f'%Y-%m-%d-%a-%H-%M-%S',time.localtime(time.time()))+'.h5',monitor='val_acc',save_best_only=True,mode='max')  
+    modelcheck = ModelCheckpoint('..\..\Python\seg-data/model/4Bands-'+time.strftime(f'%Y-%m-%d-%a-%H-%M-%S',time.localtime(time.time()))+'.h5',monitor='val_acc',save_best_only=True,mode='max')  
     
     callable = [modelcheck]  
     train_set,val_set = get_train_val()

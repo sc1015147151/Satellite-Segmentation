@@ -9,7 +9,7 @@ from skimage import exposure
 import matplotlib.pyplot as plt
 img_w = 256  
 img_h = 256 
-data_dir=r'../../../Python/seg-data/data_MB/'
+data_dir=r'C:/Python/seg-data/data_MB/'
 
 image_sets = ['2018']
 def tiff2array(tif_data):

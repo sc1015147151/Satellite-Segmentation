@@ -8,8 +8,8 @@ from tqdm import tqdm
 
 img_w = 256  
 img_h = 256  
-
-image_sets = ['2016.png']
+img_dir= r'D:\Python\seg-data\data-GF/'
+image_sets = ['2016Sentinel']
 
 def gamma_transform(img, gamma):
     gamma_table = [np.power(x / 255.0, gamma) * 255.0 for x in range(256)]
@@ -62,14 +62,14 @@ def data_augment(xb,yb):
         
     return xb,yb
 
-def creat_dataset(image_num = 15, mode = 'original'):
+def creat_dataset(image_num = 512, mode = 'original'):
     print('creating dataset...')
     image_each = image_num / len(image_sets)
     g_count = 0
     for i in tqdm(range(len(image_sets))):
         count = 0
-        src_img = cv2.imread('../../Python/seg-data/data_MB/' + image_sets[i])  # 3 channels
-        label_img = cv2.imread('../../Python/seg-data/data_MB/' + image_sets[i],cv2.IMREAD_GRAYSCALE)  # single channel
+        src_img = cv2.imread(img_dir + image_sets[i]+'.png')  # 3 channels
+        label_img = cv2.imread(img_dir + image_sets[i]+'-label.png',cv2.IMREAD_GRAYSCALE)  # single channel
         X_height,X_width,_ = src_img.shape
         while count < image_each:
             random_width = random.randint(0, X_width - img_w - 1)
@@ -88,9 +88,9 @@ def creat_dataset(image_num = 15, mode = 'original'):
                         if (pixel == np.array([0,0,0])).all():
                             black_num=black_num+1
                 if (black_num<256*256*0.65):
-                    cv2.imwrite(('../../Python/seg-data/data_MB/visualize/%d.png' % g_count),visualize)
-                    cv2.imwrite(('../../Python/seg-data/data_MB/%d.png' % g_count),src_roi)
-                    cv2.imwrite(('../../Python/seg-data/data_MB/label/%d.png' % g_count),label_roi)
+                    cv2.imwrite((img_dir+'visualize/%d.png' % g_count),visualize)
+                    cv2.imwrite((img_dir+'src/%d.png' % g_count),src_roi)
+                    cv2.imwrite((img_dir+'label/%d.png' % g_count),label_roi)
                     count += 1 
                     g_count += 1
 
