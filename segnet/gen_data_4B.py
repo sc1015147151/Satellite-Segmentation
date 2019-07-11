@@ -9,7 +9,7 @@ from skimage import exposure
 import matplotlib.pyplot as plt
 img_w = 256  
 img_h = 256 
-data_dir=r'C:/Python/seg-data/data_MB/'
+data_dir=r'D:/Python/seg-data/data_MB/'
 
 image_sets = ['2018']
 def tiff2array(tif_data):
@@ -91,9 +91,9 @@ def creat_dataset(image_num = 1500, mode = 'original'):
                         if (pixel == 0):
                             black_num=black_num+1
                 if (black_num<256*256*0.5):   
-                    cv2.imwrite((data_dir+'/test/labelV/%d.png' % g_count),visualize)
-                    np.save(data_dir+'/test/src/%d' % g_count,src_roi)
-                    cv2.imwrite((data_dir+'/test/label/%d.png' % g_count),label_roi)
+                    cv2.imwrite((data_dir+'labelV/%d.png' % g_count),visualize)
+                    np.save(data_dir+'src/%d' % g_count,src_roi)
+                    cv2.imwrite((data_dir+'label/%d.png' % g_count),label_roi)
                     
                     
                     count += 1 

@@ -227,7 +227,7 @@ def train(args):
     train_numb = len(train_set)  
     valid_numb = len(val_set)  
     print ("the number of train data is",train_numb)  
-      ("the number of val data is",valid_numb)
+      #("the number of val data is",valid_numb)
     H = model.fit_generator(generator=generateData(BS,train_set),steps_per_epoch=train_numb//BS,epochs=EPOCHS,verbose=1,  
                     validation_data=generateValidData(BS,val_set),validation_steps=valid_numb//BS,callbacks=callable,max_q_size=1)  
 

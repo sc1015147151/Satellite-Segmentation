@@ -1,11 +1,5 @@
-"""
-@author: LiShiHang
-@software: PyCharm
-@file: utils.py
-@time: 2018/12/18 14:58
-"""
-from keras.engine import Layer
-import keras.backend as K
+from keras import backend as K
+from keras.layers import Layer
 
 
 class MaxPoolingWithArgmax2D(Layer):
@@ -30,13 +24,13 @@ class MaxPoolingWithArgmax2D(Layer):
             padding = padding.upper()
             strides = [1, strides[0], strides[1], 1]
             output, argmax = K.tf.nn.max_pool_with_argmax(
-                inputs,
-                ksize=ksize,
-                strides=strides,
-                padding=padding)
+                    inputs,
+                    ksize=ksize,
+                    strides=strides,
+                    padding=padding)
         else:
             errmsg = '{} backend is not supported for layer {}'.format(
-                K.backend(), type(self).__name__)
+                    K.backend(), type(self).__name__)
             raise NotImplementedError(errmsg)
         argmax = K.cast(argmax, K.floatx())
         return [output, argmax]
@@ -44,9 +38,9 @@ class MaxPoolingWithArgmax2D(Layer):
     def compute_output_shape(self, input_shape):
         ratio = (1, 2, 2, 1)
         output_shape = [
-            dim // ratio[idx]
-            if dim is not None else None
-            for idx, dim in enumerate(input_shape)]
+                dim//ratio[idx]
+                if dim is not None else None
+                for idx, dim in enumerate(input_shape)]
         output_shape = tuple(output_shape)
         return [output_shape, output_shape]
 
@@ -55,12 +49,11 @@ class MaxPoolingWithArgmax2D(Layer):
 
 
 class MaxUnpooling2D(Layer):
-    def __init__(self, up_size=(2, 2), **kwargs):
+    def __init__(self, size=(2, 2), **kwargs):
         super(MaxUnpooling2D, self).__init__(**kwargs)
-        self.up_size = up_size
+        self.size = size
 
     def call(self, inputs, output_shape=None):
-
         updates, mask = inputs[0], inputs[1]
         with K.tf.variable_scope(self.name):
             mask = K.cast(mask, 'int32')
@@ -68,19 +61,20 @@ class MaxUnpooling2D(Layer):
             #  calculation new shape
             if output_shape is None:
                 output_shape = (
-                    input_shape[0],
-                    input_shape[1] * self.up_size[0],
-                    input_shape[2] * self.up_size[1],
-                    input_shape[3])
+                        input_shape[0],
+                        input_shape[1]*self.size[0],
+                        input_shape[2]*self.size[1],
+                        input_shape[3])
+            self.output_shape1 = output_shape
 
             # calculation indices for batch, height, width and feature maps
             one_like_mask = K.ones_like(mask, dtype='int32')
             batch_shape = K.concatenate(
-                [[input_shape[0]], [1], [1], [1]],
-                axis=0)
+                    [[input_shape[0]], [1], [1], [1]],
+                    axis=0)
             batch_range = K.reshape(
-                K.tf.range(output_shape[0], dtype='int32'),
-                shape=batch_shape)
+                    K.tf.range(output_shape[0], dtype='int32'),
+                    shape=batch_shape)
             b = one_like_mask * batch_range
             y = mask // (output_shape[2] * output_shape[3])
             x = (mask // output_shape[3]) % output_shape[2]
@@ -92,6 +86,7 @@ class MaxUnpooling2D(Layer):
             indices = K.transpose(K.reshape(
                 K.stack([b, y, x, f]),
                 [4, updates_size]))
+            print(K.tf.size(indices) ,'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
             values = K.reshape(updates, [updates_size])
             ret = K.tf.scatter_nd(indices, values, output_shape)
             return ret
@@ -99,31 +94,8 @@ class MaxUnpooling2D(Layer):
     def compute_output_shape(self, input_shape):
         mask_shape = input_shape[1]
         return (
-            mask_shape[0],
-            mask_shape[1] * self.up_size[0],
-            mask_shape[2] * self.up_size[1],
-            mask_shape[3]
-        )
-
-
-if __name__ == '__main__':
-
-    import keras
-    import numpy as np
-
-    # input = keras.layers.Input((4, 4, 3))
-    # o = MaxPoolingWithArgmax2D()(input)
-    # model = keras.Model(inputs=input, outputs=o)  # outputs=o
-    # model.compile(optimizer="adam", loss='categorical_crossentropy')
-    # x = np.random.randint(0, 100, (3, 4, 4, 3)) # 调试此处
-    # m = model.predict(x) # 调试此处
-    # print(m)
-
-    input = keras.layers.Input((4, 4, 3))
-    o = MaxPoolingWithArgmax2D()(input)
-    o2 = MaxUnpooling2D()(o)
-    model = keras.Model(inputs=input, outputs=o2)  # outputs=o
-    model.compile(optimizer="adam", loss='categorical_crossentropy')
-    x = np.random.randint(0, 100, (3, 4, 4, 3))  # 调试此处
-    m = model.predict(x)  # 调试此处
-    print(m)
+                mask_shape[0],
+                mask_shape[1]*self.size[0],
+                mask_shape[2]*self.size[1],
+                mask_shape[3]
+                )
