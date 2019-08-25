@@ -11,8 +11,10 @@ from keras.layers import Input
 from keras.utils.np_utils import to_categorical  
 from keras.preprocessing.image import img_to_array  
 from keras.callbacks import ModelCheckpoint ,TensorBoard
-
-from utils import *
+from SegNet0 import *
+from SegNet import *
+from FCN32 import *
+from Models.utils import *
 from sklearn.preprocessing import LabelEncoder  
 from PIL import Image  
 import matplotlib.pyplot as plt  
@@ -23,7 +25,7 @@ from tqdm import tqdm
 from keras import backend as K 
 from keras.applications import vgg16
 from keras.layers import Input
-def SegNet(
+def SegNet1(
         input_shape=(256,256,4),
         n_labels=2,
         kernel=3,
@@ -31,8 +33,7 @@ def SegNet(
         output_mode="softmax"):
     # encoder
     inputs = Input(shape=input_shape)
-    img_w=input_shape[1]
-    img_h=input_shape[2] 
+
     conv_1 = Convolution2D(64, (kernel, kernel), padding="same")(inputs)
     conv_1 = BatchNormalization()(conv_1)
     conv_1 = Activation("relu")(conv_1)
@@ -75,34 +76,11 @@ def SegNet(
 
     pool_4, mask_4 = MaxPoolingWithArgmax2D(pool_size)(conv_10)
 
-    conv_11 = Convolution2D(512, (kernel, kernel), padding="same")(pool_4)
-    conv_11 = BatchNormalization()(conv_11)
-    conv_11 = Activation("relu")(conv_11)
-    conv_12 = Convolution2D(512, (kernel, kernel), padding="same")(conv_11)
-    conv_12 = BatchNormalization()(conv_12)
-    conv_12 = Activation("relu")(conv_12)
-    conv_13 = Convolution2D(512, (kernel, kernel), padding="same")(conv_12)
-    conv_13 = BatchNormalization()(conv_13)
-    conv_13 = Activation("relu")(conv_13)
 
-    pool_5, mask_5 = MaxPoolingWithArgmax2D(pool_size)(conv_13)
     print("Build enceder done..")
 
-    # decoder
 
-    unpool_1 = MaxUnpooling2D(pool_size)([pool_5, mask_5])
-
-    conv_14 = Convolution2D(512, (kernel, kernel), padding="same")(unpool_1)
-    conv_14 = BatchNormalization()(conv_14)
-    conv_14 = Activation("relu")(conv_14)
-    conv_15 = Convolution2D(512, (kernel, kernel), padding="same")(conv_14)
-    conv_15 = BatchNormalization()(conv_15)
-    conv_15 = Activation("relu")(conv_15)
-    conv_16 = Convolution2D(512, (kernel, kernel), padding="same")(conv_15)
-    conv_16 = BatchNormalization()(conv_16)
-    conv_16 = Activation("relu")(conv_16)
-
-    unpool_2 = MaxUnpooling2D(pool_size)([conv_16, mask_4])
+    unpool_2 = MaxUnpooling2D(pool_size)([pool_4, mask_4])
 
     conv_17 = Convolution2D(512, (kernel, kernel), padding="same")(unpool_2)
     conv_17 = BatchNormalization()(conv_17)
@@ -153,10 +131,3 @@ def SegNet(
     model.compile(loss='categorical_crossentropy',optimizer='sgd',metrics=['accuracy'])
 
     return model
-if __name__ == '__main__':
-    m =  SegNet()
-    from keras.utils import plot_model
-    plot_model(m, show_shapes=True, to_file='model_SegNet.png')
-    print(len(m.layers))
-	
-    m.summary()

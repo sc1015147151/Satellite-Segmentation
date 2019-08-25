@@ -11,8 +11,10 @@ from keras.layers import Input
 from keras.utils.np_utils import to_categorical  
 from keras.preprocessing.image import img_to_array  
 from keras.callbacks import ModelCheckpoint ,TensorBoard
-
-from utils import *
+from SegNet0 import *
+from SegNet import *
+from FCN32 import *
+from Models.utils import *
 from sklearn.preprocessing import LabelEncoder  
 from PIL import Image  
 import matplotlib.pyplot as plt  
@@ -153,10 +155,3 @@ def SegNet(
     model.compile(loss='categorical_crossentropy',optimizer='sgd',metrics=['accuracy'])
 
     return model
-if __name__ == '__main__':
-    m =  SegNet()
-    from keras.utils import plot_model
-    plot_model(m, show_shapes=True, to_file='model_SegNet.png')
-    print(len(m.layers))
-	
-    m.summary()
