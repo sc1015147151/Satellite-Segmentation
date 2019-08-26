@@ -127,7 +127,7 @@ u-msgpack-python==2.5.1
 urllib3==1.25.3
 wcwidth==0.1.7
 webencodings==0.5.1
-Werkzeug==0.15.2
+Werkzeug==0.15.3
 widgetsnbextension==3.4.2
 wrapt==1.11.1
 WsgiDAV==3.0.0
