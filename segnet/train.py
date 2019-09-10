@@ -17,6 +17,7 @@ from SegNet2 import *
 from SegNet1 import *
 from SegNet import *
 from FCN32 import *
+from UNET import *
 from Models.utils import *
 from sklearn.preprocessing import LabelEncoder  
 from PIL import Image  
@@ -80,6 +81,7 @@ def train(key,EPOCHS = 10,BatchSize = 4,train_numb_per_epoch = 10*8,valid_rate =
     valid_numb = train_numb*valid_rate	
 
     method = {
+        "UNET": unet,
         "FCN32": FCN32,
         'SegNet': SegNet,
         'SegNet1': SegNet1,
@@ -99,11 +101,11 @@ def train(key,EPOCHS = 10,BatchSize = 4,train_numb_per_epoch = 10*8,valid_rate =
     print ("the number of train data is",train_numb,train_numb//BS)  
     print ("the number of val data is",valid_numb,valid_numb//BS)
 
-    H = m.fit_generator(generator=generateDataTF(BS,img_w,img_h,2,['2016.tif','2017.tif','2019.tif'],['2016.png','2017.png','2019.png']),
+    H = m.fit_generator(generator=generateDataTF(BS,img_w,img_h,2,['hzh.tif'],['hzh.png']),
                             steps_per_epoch=train_numb_per_epoch,
                             epochs=EPOCHS,
                             verbose=0,
-                            validation_data=generateDataTF(BS,img_w,img_h,2,['2016.tif','2017.tif','2019.tif'],['2016.png','2017.png','2019.png']),
+                            validation_data=generateDataTF(BS,img_w,img_h,2,['hzh.tif'],['hzh.png']),
                             validation_steps=train_numb_per_epoch*valid_rate,
                             callbacks=callableTF,
                             max_q_size=1)  

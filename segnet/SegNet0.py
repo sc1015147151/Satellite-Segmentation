@@ -25,10 +25,10 @@ from tqdm import tqdm
 from keras import backend as K 
 from keras.applications import vgg16
 from keras.layers import Input
-def SegNet0(n_label=2,size=256): 
+def SegNet0(input_shape=(256,256,4),n_label=2): 
   n_label=2
-  img_w=size
-  img_h=size
+  img_w=input_shape[0]
+  img_h=input_shape[0]
   model = Sequential()  
   #encoder  
   model.add(Conv2D(64,(3,3),strides=(1,1),input_shape=(img_w,img_h,4),padding='same',activation='relu'))  
