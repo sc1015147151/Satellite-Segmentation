@@ -5,7 +5,7 @@ import csv
 import re
 import cv2 
 from matplotlib import pyplot as plt
-data_csv=csv.reader(open('2016.csv','r'))
+data_csv=csv.reader(open('../../csv/0.csv','r'))
 line1=next(data_csv)
 line2=next(data_csv)
 line3=next(data_csv)
@@ -24,11 +24,14 @@ roiDataFrame= pd.DataFrame(roi_data,  columns = line8)
 width=int(re.split(r'\s+', line2[0])[3])
 height=int(re.split(r'\s+', line2[0])[5])
 backGroundImg=np.zeros((height,width))
-for i in range(roiDataFrame.shape[0]):   
-    backGroundImg[int(roiDataFrame[line8[1]][i])][int(roiDataFrame[line8[0]][i])]=1
+for i in range(roiDataFrame.shape[0]): 
+    print(i)  
+    print(int(roiDataFrame[line8[1]][i]))
+    print(int(roiDataFrame[line8[0]][i]))
+    backGroundImg[int(roiDataFrame[line8[1]][i]-roiDataFrame[line8[1]].min())][int(roiDataFrame[line8[0]][i]-roiDataFrame[line8[0]].min())]=1
 plt.imshow(backGroundImg, cmap = 'gray')
-cv2.imwrite('2016labelV.png', backGroundImg*255)
-cv2.imwrite('2016label.png', cv2.merge([backGroundImg,backGroundImg,backGroundImg]))
+cv2.imwrite('0V.png', backGroundImg*255)
+cv2.imwrite('0.png', cv2.merge([backGroundImg,backGroundImg,backGroundImg]))
 
 
 
