@@ -130,5 +130,5 @@ webencodings==0.5.1
 Werkzeug==0.15.2
 widgetsnbextension==3.4.2
 wrapt==1.11.1
-WsgiDAV==3.0.0
+WsgiDAV==4.1.0
 XlsxWriter==1.1.8
